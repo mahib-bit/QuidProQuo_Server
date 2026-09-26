@@ -1,4 +1,4 @@
-//===============================Imports================================
+//===============================Imports=================================
 
 const express = require('express');
 
@@ -6,19 +6,19 @@ const mongoose = require('mongoose');
 
 const User = require('./models/Users')
 
-//=============================Express App==============================
+//=============================Express App===============================
 
 const app = express();
 
-//=============================Middleware==============================
+//=============================Middleware================================
 
 app.use(express.json());
 
-//=================================Port=================================
+//=================================Port===================================
 
 const port = 3000;
 
-//==========================MongoDB Connection==============================
+//==========================MongoDB Connection============================
 
 mongoose.connect('mongodb://127.0.0.1:27017/quid-pro-quo')
     .then(() => {
@@ -28,18 +28,28 @@ mongoose.connect('mongodb://127.0.0.1:27017/quid-pro-quo')
         console.log('MongoDB connection failed:', error);
     });
 
-//==============================User Routes=================================
+//==============================User Routes===============================
 
 app.get('/', (req, res) => {
     res.send('Quid Pro Quo Server is running!');
 });
 
 app.post('/users', async (req, res) => {
-    const user = new User(req.body);
+    try{
+        const user = new User(req.body);
 
-    await user.save();
+        await user.save();
 
-    res.json(user);
+        res.status(201).json(user);
+    }
+    catch(error){
+        res.status(400).json({
+            
+            message: 'Failed to create user. Bad request!',
+            error: error.message
+        })
+    }
+    
 });
 
 //=============================Start Server==============================
