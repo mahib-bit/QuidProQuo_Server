@@ -15,12 +15,12 @@ const userSchema = new mongoose.Schema({
 
     photo: {
         type: String,
-        default:''
+        default: ''
     }
 });
 
 //===========================User Model=========================
- 
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

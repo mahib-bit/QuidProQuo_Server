@@ -1,60 +1,69 @@
-//===============================Imports=================================
+//===============================Imports================================
 
 const express = require('express');
 
-const mongoose = require('mongoose');
+const User = require('./models/User');
 
-const User = require('./models/Users')
+const connectDB = require('./config/db');
 
-//=============================Express App===============================
+
+//=============================Express App==============================
 
 const app = express();
 
-//=============================Middleware================================
+
+//=============================Middleware==============================
 
 app.use(express.json());
 
-//=================================Port===================================
+
+//=================================Port=================================
 
 const port = 3000;
 
-//==========================MongoDB Connection============================
 
-mongoose.connect('mongodb://127.0.0.1:27017/quid-pro-quo')
-    .then(() => {
-        console.log('MongoDB connected Successfully!');
-    })
-    .catch((error) => {
-        console.log('MongoDB connection failed:', error);
-    });
+//==========================MongoDB Connection==============================
 
-//==============================User Routes===============================
+connectDB();
+
+
+//================================Routes=================================
 
 app.get('/', (req, res) => {
+
     res.send('Quid Pro Quo Server is running!');
+
 });
 
+
+//=============================User Routes==============================
+
 app.post('/users', async (req, res) => {
-    try{
+
+    try {
+
         const user = new User(req.body);
 
         await user.save();
 
         res.status(201).json(user);
-    }
-    catch(error){
+
+    } catch (error) {
+
         res.status(400).json({
-            
-            message: 'Failed to create user. Bad request!',
+            message: 'Failed to create user',
             error: error.message
-        })
+        });
+
     }
-    
+
 });
+
 
 //=============================Start Server==============================
 
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
 
+    console.log(`Server running on port ${port}`);
+
+});
