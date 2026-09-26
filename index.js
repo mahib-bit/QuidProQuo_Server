@@ -2,9 +2,10 @@
 
 const express = require('express');
 
-const User = require('./models/User');
-
 const connectDB = require('./config/db');
+
+const userRoutes = require('./routes/userRoutes');
+
 
 
 //=============================Express App==============================
@@ -12,9 +13,13 @@ const connectDB = require('./config/db');
 const app = express();
 
 
+
 //=============================Middleware==============================
 
 app.use(express.json());
+
+app.use(userRoutes);
+
 
 
 //=================================Port=================================
@@ -22,9 +27,11 @@ app.use(express.json());
 const port = 3000;
 
 
-//==========================MongoDB Connection==============================
+
+//==========================MongoDB Connection==========================
 
 connectDB();
+
 
 
 //================================Routes=================================
@@ -35,29 +42,6 @@ app.get('/', (req, res) => {
 
 });
 
-
-//=============================User Routes==============================
-
-app.post('/users', async (req, res) => {
-
-    try {
-
-        const user = new User(req.body);
-
-        await user.save();
-
-        res.status(201).json(user);
-
-    } catch (error) {
-
-        res.status(400).json({
-            message: 'Failed to create user',
-            error: error.message
-        });
-
-    }
-
-});
 
 
 //=============================Start Server==============================
