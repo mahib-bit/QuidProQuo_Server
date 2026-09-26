@@ -3,12 +3,23 @@ const mongoose = require('mongoose');
 //==========================User Schema=========================
 
 const userSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    photo: String
-})
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
 
-//==========================User Model=========================
+    photo: {
+        type: String,
+        default:''
+    }
+});
+
+//===========================User Model=========================
  
 const User = mongoose.model('User', userSchema);
 
