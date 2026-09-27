@@ -6,7 +6,7 @@ const connectDB = require('./config/db');
 
 const userRoutes = require('./routes/userRoutes');
 
-
+const errorMiddleware = require('./middleware/errorMiddleware')
 
 //=============================Express App==============================
 
@@ -14,11 +14,9 @@ const app = express();
 
 
 
-//=============================Middleware==============================
+//=============================Middleware===============================
 
 app.use(express.json());
-
-app.use(userRoutes);
 
 
 
@@ -42,6 +40,16 @@ app.get('/', (req, res) => {
 
 });
 
+
+
+//=============================User Routes==============================
+
+app.use('/users', userRoutes);
+
+
+//=============================Error Middleware==========================
+
+app.use(errorMiddleware);
 
 
 //=============================Start Server==============================
