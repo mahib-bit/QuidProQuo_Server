@@ -31,7 +31,7 @@ const createUser = async (req, res) => {
 
 //=============================Get All Users============================
 
-const getUsers = async (req, res) => {
+const getUsers = async (req, res, next) => {
 
     try {
 
@@ -41,10 +41,7 @@ const getUsers = async (req, res) => {
 
     } catch (error) {
 
-        res.status(500).json({
-            message: 'Failed to fetch users',
-            error: error.message
-        });
+        next (error);
 
     }
 

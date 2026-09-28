@@ -6,7 +6,10 @@ const connectDB = require('./config/db');
 
 const userRoutes = require('./routes/userRoutes');
 
-const errorMiddleware = require('./middleware/errorMiddleware')
+const itemRoutes = require('./routes/itemRouters');
+
+const errorMiddleware = require('./middleware/errorMiddleware');
+
 
 //=============================Express App==============================
 
@@ -46,6 +49,10 @@ app.get('/', (req, res) => {
 
 app.use('/users', userRoutes);
 
+
+//=============================Item Routes==============================
+
+app.use('/items', itemRoutes);
 
 //=============================Error Middleware==========================
 

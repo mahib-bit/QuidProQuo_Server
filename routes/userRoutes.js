@@ -8,7 +8,7 @@ const {
     getUserById,
     updateUser,
     deleteUser
-} = require('../controllers/useControllers');
+} = require('../controllers/userControllers');
 
 
 //===============================Router=================================
