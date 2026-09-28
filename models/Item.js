@@ -48,8 +48,8 @@ const itemSchema = new mongoose.Schema({
 
     condition: {
         type: String,
-        required: true,
-        trim: true
+        enum: ['New', 'Good', 'Fair', 'Poor'],
+        default: 'Good'
     },
 
 
@@ -62,11 +62,34 @@ const itemSchema = new mongoose.Schema({
     },
 
 
+    //=============================Purchase Date=========================
+
+    purchaseDate: {
+        type: Date
+    },
+
+
+    //=============================Purchase Price========================
+
+    purchasePrice: {
+        type: Number,
+        min: 0
+    },
+
+
     //=============================Images================================
 
     images: {
         type: [String],
         default: []
+    },
+
+
+    //=============================Notes=================================
+
+    notes: {
+        type: String,
+        trim: true
     },
 
 
@@ -78,7 +101,7 @@ const itemSchema = new mongoose.Schema({
         default: 'available'
     }
 
-});
+}, { timestamps: true });
 
 
 //=============================Item Model===============================

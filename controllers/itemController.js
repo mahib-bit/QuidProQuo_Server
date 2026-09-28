@@ -10,7 +10,7 @@ const createItem = async (req, res, next) => {
 
     try {
 
-        const item = new Item(req.body); 
+        const item = new Item(req.body);
 
         await item.save();
 
@@ -24,13 +24,26 @@ const createItem = async (req, res, next) => {
 
 };
 
-//=============================Get All Items============================
+//=========================Get Items (with filters)=========================
 
 const getItems = async (req, res, next) => {
 
     try {
 
-        const items = await Item.find()
+        const filter = {};
+
+        if (req.query.category) filter.category = req.query.category;
+        if (req.query.status) filter.status = req.query.status;
+        if (req.query.owner) filter.owner = req.query.owner;
+
+        if (req.query.search) {
+            filter.name = { 
+                $regex: req.query.search, 
+                $options: 'i' 
+            };
+        }
+
+        const items = await Item.find(filter)
             .populate('owner');
 
         res.json(items);
@@ -73,9 +86,9 @@ const getItemById = async (req, res, next) => {
 //=============================Update Item==============================
 
 
-const updateItem = async (req, res, next) =>{
+const updateItem = async (req, res, next) => {
 
-    try{
+    try {
         const item = await Item.findByIdAndUpdate(
             req.params.id,
             req.body,
@@ -84,15 +97,15 @@ const updateItem = async (req, res, next) =>{
                 runValidators: true
             }
         ).populate('owner');
-        
-        if(!item) {
+
+        if (!item) {
             return res.status(404).json({
                 message: 'User not found'
             });
         }
         res.json(item);
     }
-    catch(error){
+    catch (error) {
         next(error);
     }
 };
