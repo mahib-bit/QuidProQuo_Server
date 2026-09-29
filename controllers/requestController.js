@@ -48,7 +48,7 @@ const getRequests = async (req, res, next) => {
 
 //=========================Get Single Request=========================
 
-const getRequestsByID = async (req, res, next) => {
+const getRequestsById = async (req, res, next) => {
     try {
         const request = await Request.findById(req.params.id)
             .populate('item')
@@ -67,8 +67,72 @@ const getRequestsByID = async (req, res, next) => {
     }
 }
 
+//=========================Accept Request=========================
 
+const acceptRequest = async (req, res, next) => {
 
+    try {
+
+        const request = await Request.findById(req.params.id);
+
+        if (!request) {
+
+            return res.status(404).json({
+                message: 'Request not found'
+            });
+
+        }
+
+        if (request.status !== 'pending') {
+
+            return res.status(400).json({
+                message: 'Only pending requests can be accepted'
+            });
+
+        }
+
+        request.status = 'accepted';
+
+        await request.save();
+
+        res.json(request);
+
+    } catch (error) {
+
+        next(error);
+
+    }
+
+};
+
+//=========================Reject Request=========================
+
+const rejectRequest = async(req, res, next) => {
+    try{
+        const request = await Request.findById(req.params.id);
+
+        if (!request) {
+            return res.status(404).json({
+                message: 'Request not found'
+            });
+        }
+
+        if(request.status !== 'pending'){
+            return res.status(400).json({
+                message: `Request is already ${request.status}`
+            })
+        }
+        request.status = 'rejected';
+        await request.save();
+        res.json({
+            message : 'Request rejected',
+            request
+        })
+    }
+    catch(error) {
+        next(error)
+    }
+}
 
 //=========================Delete Request=========================
 const deleteRequest = async (req, res, next) => {
@@ -100,6 +164,8 @@ const deleteRequest = async (req, res, next) => {
 module.exports = {
     createRequest,
     getRequests,
-    getRequestsByID,
-    deleteRequest
+    getRequestsById,
+    deleteRequest,
+    acceptRequest,
+    rejectRequest
 };

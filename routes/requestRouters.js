@@ -5,8 +5,10 @@ const express = require('express');
 const {
     createRequest,
     getRequests,
-    getRequestsByID,
-    deleteRequest
+    getRequestsById,
+    deleteRequest,
+    acceptRequest,
+    rejectRequest
 } = require('../controllers/requestController');
 
 
@@ -23,9 +25,13 @@ router.post('/', createRequest);
 
 router.get('/', getRequests);
 
-router.get('/:id', getRequestsByID);
+router.get('/:id', getRequestsById);
 
 router.delete('/:id', deleteRequest);
+
+router.patch('/:id/accept', acceptRequest);
+
+router.patch('/:id/reject', rejectRequest);
 
 //=============================Export Router============================
 
