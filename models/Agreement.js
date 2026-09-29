@@ -41,7 +41,9 @@ const agreementSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-
+    returnedAt: {
+        type: Date
+    },
     status: {
         type: String,
         enum: ['active', 'overdue', 'returned', 'disputed'],

@@ -2,7 +2,9 @@
 
 const Request = require('../models/Request');
 
+const Agreement = require('../models/Agreement');
 
+const Item = require('../models/Item')
 
 //=============================Create Request===========================
 
@@ -95,7 +97,23 @@ const acceptRequest = async (req, res, next) => {
 
         await request.save();
 
-        res.json(request);
+        const agreement = new Agreement({
+            item: request.item,
+            owner: request.owner,
+            borrower: request.requester,
+            request: request._id,
+            agreementType: request.agreementType,
+            startDate: request.proposedStart,
+            endDate: request.proposedEnd
+        });
+        await agreement.save();
+
+        await Item.findByIdAndUpdate(request.item, {status: 'unavailable'});
+
+        res.status(200).json({
+            message: 'Request accepted, agreement created',
+            request, agreement
+        })
 
     } catch (error) {
 
@@ -107,8 +125,8 @@ const acceptRequest = async (req, res, next) => {
 
 //=========================Reject Request=========================
 
-const rejectRequest = async(req, res, next) => {
-    try{
+const rejectRequest = async (req, res, next) => {
+    try {
         const request = await Request.findById(req.params.id);
 
         if (!request) {
@@ -117,7 +135,7 @@ const rejectRequest = async(req, res, next) => {
             });
         }
 
-        if(request.status !== 'pending'){
+        if (request.status !== 'pending') {
             return res.status(400).json({
                 message: `Request is already ${request.status}`
             })
@@ -125,11 +143,11 @@ const rejectRequest = async(req, res, next) => {
         request.status = 'rejected';
         await request.save();
         res.json({
-            message : 'Request rejected',
+            message: 'Request rejected',
             request
         })
     }
-    catch(error) {
+    catch (error) {
         next(error)
     }
 }
