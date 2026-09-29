@@ -3,7 +3,10 @@
 const express = require('express');
 
 const {
-    createRequest
+    createRequest,
+    getRequests,
+    getRequestsByID,
+    deleteRequest
 } = require('../controllers/requestController');
 
 
@@ -18,7 +21,11 @@ const router = express.Router();
 
 router.post('/', createRequest);
 
+router.get('/', getRequests);
 
+router.get('/:id', getRequestsByID);
+
+router.delete('/:id', deleteRequest);
 
 //=============================Export Router============================
 

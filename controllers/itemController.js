@@ -60,8 +60,6 @@ const getItems = async (req, res, next) => {
 
         }
 
-        
-
         //=============================Query===============================
 
         let query = Item.find(filter)

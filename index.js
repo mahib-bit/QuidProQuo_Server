@@ -8,6 +8,8 @@ const userRoutes = require('./routes/userRoutes');
 
 const itemRoutes = require('./routes/itemRouters');
 
+const requestRoutes = require('./routes/requestRouters')
+
 const errorMiddleware = require('./middleware/errorMiddleware');
 
 
@@ -53,6 +55,10 @@ app.use('/users', userRoutes);
 //=============================Item Routes==============================
 
 app.use('/items', itemRoutes);
+
+//=============================Request Routes==========================
+
+app.use('/requests', requestRoutes);
 
 //=============================Error Middleware==========================
 
