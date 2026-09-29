@@ -12,6 +12,31 @@ const createRequest = async (req, res, next) => {
 
     try {
 
+        const item = await Item.findById(req.body.item);
+
+        if (req.body.requester === req.body.owner) {
+            return res.status(400).json({
+                message: 'You cannot send a request for your own item'
+            });
+        }
+
+        if (!item) {
+            return res.status(404).json({
+                message: 'Item not found'
+            });
+        }
+
+        if (item.status !== 'available') {
+            return res.status(400).json({
+                message: 'Item is currently unavailable'
+            });
+        }
+
+        if (new Date(req.body.proposedStart) > new Date(req.body.proposedEnd)) {
+            return res.status(400).json({
+                message: 'Start date cannot be after end date'
+            });
+        }
         const request = new Request(req.body);
 
         await request.save();
@@ -108,7 +133,7 @@ const acceptRequest = async (req, res, next) => {
         });
         await agreement.save();
 
-        await Item.findByIdAndUpdate(request.item, {status: 'unavailable'});
+        await Item.findByIdAndUpdate(request.item, { status: 'unavailable' });
 
         res.status(200).json({
             message: 'Request accepted, agreement created',
