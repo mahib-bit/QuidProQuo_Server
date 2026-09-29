@@ -29,22 +29,72 @@ const createItem = async (req, res, next) => {
 const getItems = async (req, res, next) => {
 
     try {
-
         const filter = {};
 
-        if (req.query.category) filter.category = req.query.category;
-        if (req.query.status) filter.status = req.query.status;
-        if (req.query.owner) filter.owner = req.query.owner;
+        //=============================Filters=============================
 
-        if (req.query.search) {
-            filter.name = { 
-                $regex: req.query.search, 
-                $options: 'i' 
-            };
+        if (req.query.category) {
+
+            filter.category = req.query.category;
+
         }
 
-        const items = await Item.find(filter)
+        if (req.query.status) {
+
+            filter.status = req.query.status;
+
+        }
+
+        if (req.query.owner) {
+
+            filter.owner = req.query.owner;
+
+        }
+
+        if (req.query.search) {
+
+            filter.name = {
+                $regex: req.query.search,
+                $options: 'i'
+            };
+
+        }
+
+        
+
+        //=============================Query===============================
+
+        let query = Item.find(filter)
             .populate('owner');
+
+
+        //=============================Sorting=============================
+
+        if (req.query.sort === 'latest') {
+
+            query = query.sort({ createdAt: -1 });
+
+        }
+
+        if (req.query.sort === 'oldest') {
+
+            query = query.sort({ createdAt: 1 });
+
+        }
+
+
+        //=============================Limit===============================
+
+        if (req.query.limit) {
+
+            query = query.limit(parseInt(req.query.limit));
+
+        }
+
+
+        //=============================Execute Query=======================
+
+        const items = await query;
 
         res.json(items);
 
