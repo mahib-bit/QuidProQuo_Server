@@ -12,6 +12,8 @@ const requestRoutes = require('./routes/requestRouters');
 
 const agreementRoutes = require('./routes/agreementRoutes');
 
+const ratingRoutes = require('./routes/ratingRouter');
+
 const errorMiddleware = require('./middleware/errorMiddleware');
 
 
@@ -65,6 +67,10 @@ app.use('/requests', requestRoutes);
 //=============================Agreement Routes==========================
 
 app.use('/agreements', agreementRoutes);
+
+//=============================Rating Routes==========================
+
+app.use('/ratings', ratingRoutes);
 
 //=============================Error Middleware==========================
 
