@@ -4,6 +4,10 @@ const express = require('express');
 
 const connectDB = require('./config/db');
 
+
+require('./config/firebaseAdmin');
+
+
 const userRoutes = require('./routes/userRoutes');
 
 const itemRoutes = require('./routes/itemRouters');
@@ -15,6 +19,7 @@ const agreementRoutes = require('./routes/agreementRoutes');
 const ratingRoutes = require('./routes/ratingRouter');
 
 const trustRoutes = require('./routes/trustRouters');
+
 
 const errorMiddleware = require('./middleware/errorMiddleware');
 
