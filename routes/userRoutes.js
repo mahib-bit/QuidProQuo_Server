@@ -10,6 +10,8 @@ const {
     deleteUser
 } = require('../controllers/userControllers');
 
+const authMiddleware = require('../middleware/authMiddleware');
+
 
 //===============================Router=================================
 
@@ -18,7 +20,7 @@ const router = express.Router();
 
 //=============================User Routes==============================
 
-router.post('/', createUser);
+router.post('/',authMiddleware, createUser);
 
 router.get('/', getUsers);
 

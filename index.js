@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 
 
 require('./config/firebaseAdmin');
+const authMiddleware = require('./middleware/authMiddleware');
 
 
 const userRoutes = require('./routes/userRoutes');
@@ -34,7 +35,16 @@ const app = express();
 
 app.use(express.json());
 
+//=========================Test Protected Route=========================
 
+app.get('/protected', authMiddleware, (req, res) => {
+
+    res.json({
+        message: 'You are authenticated!',
+        user: req.user
+    });
+
+});
 
 //=================================Port=================================
 

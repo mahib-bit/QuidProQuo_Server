@@ -6,23 +6,40 @@ const User = require('../models/Users');
 
 //=============================Create User==============================
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
 
     try {
 
-        const user = new User(req.body);
+        const firebaseUid = req.user.uid;
+
+        const { name, email, photo} = req.body;
+
+        const existingUser = await User.findOne({ firebaseUid });
+
+        if(existingUser) {
+            return res.status(409).json({
+                message: 'User already exists'
+            })
+        }
+
+        const user = new User({
+            firebaseUid,
+            name,
+            email,
+            photo
+        });
 
         await user.save();
 
-        res.status(201).json(user);
-
-    } catch (error) {
-
-        res.status(400).json({
-            message: 'Failed to create user',
-            error: error.message
+        res.status(201).json({
+            message: 'User created successfully',
+            user
         });
 
+    } 
+    catch (error) {
+
+        next(error);
     }
 
 };
