@@ -1,9 +1,8 @@
 //===============================Imports================================
 
 const express = require('express');
-
+const cors = require('cors');
 const connectDB = require('./config/db');
-
 
 require('./config/firebaseAdmin');
 const authMiddleware = require('./middleware/authMiddleware');
@@ -29,7 +28,7 @@ const errorMiddleware = require('./middleware/errorMiddleware');
 
 const app = express();
 
-
+app.use(cors());
 
 //=============================Middleware===============================
 
