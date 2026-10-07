@@ -1,16 +1,26 @@
 //===============================Imports================================
 
 const Item = require('../models/Item');
-
-
-
-//=============================Create Item===============================
+const User = require('../models/Users');
 
 const createItem = async (req, res, next) => {
 
     try {
 
-        const item = new Item(req.body);
+        //=========================Find MongoDB User=========================
+        
+        const user = await User.findOne({
+            firebaseUid: req.user.uid
+        })
+        if (!user){
+            return res.status(404).json({
+                message: 'User not found'
+            })
+        }
+
+//=============================Create Item===============================
+
+        const item = new Item({...req.body, owner: user._id});
 
         await item.save();
 

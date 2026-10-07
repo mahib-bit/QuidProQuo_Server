@@ -44,7 +44,33 @@ const createUser = async (req, res, next) => {
 
 };
 
+//=========================Get Current User=========================
 
+const getCurrentUser = async (req, res, next) => {
+
+    try {
+
+        const firebaseUid = req.user.uid;
+
+        const user = await User.findOne({ firebaseUid });
+
+        if (!user) {
+
+            return res.status(404).json({
+                message: 'User not found'
+            });
+
+        }
+
+        res.json(user);
+
+    } catch (error) {
+
+        next(error);
+
+    }
+
+};
 
 //=============================Get All Users============================
 
@@ -173,6 +199,7 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
     createUser,
+    getCurrentUser,
     getUsers,
     getUserById,
     updateUser,

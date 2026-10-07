@@ -4,6 +4,7 @@ const express = require('express');
 
 const {
     createUser,
+    getCurrentUser,
     getUsers,
     getUserById,
     updateUser,
@@ -23,6 +24,10 @@ const router = express.Router();
 router.post('/',authMiddleware, createUser);
 
 router.get('/', getUsers);
+
+//=========================Get Current User=========================
+
+router.get('/me', authMiddleware, getCurrentUser);
 
 router.get('/:id', getUserById);
 

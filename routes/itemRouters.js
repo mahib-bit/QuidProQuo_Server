@@ -2,6 +2,8 @@
 
 const express = require('express');
 
+const authMiddleware = require('../middleware/authMiddleware');
+
 const {
     createItem,
     getItems,
@@ -20,7 +22,7 @@ const router = express.Router();
 
 //=============================Item Routes==============================
 
-router.post('/', createItem);
+router.post('/', authMiddleware , createItem);
 
 router.get('/', getItems);
 
