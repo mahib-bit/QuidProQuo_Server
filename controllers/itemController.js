@@ -8,19 +8,19 @@ const createItem = async (req, res, next) => {
     try {
 
         //=========================Find MongoDB User=========================
-        
+
         const user = await User.findOne({
             firebaseUid: req.user.uid
         })
-        if (!user){
+        if (!user) {
             return res.status(404).json({
                 message: 'User not found'
             })
         }
 
-//=============================Create Item===============================
+        //=============================Create Item===============================
 
-        const item = new Item({...req.body, owner: user._id});
+        const item = new Item({ ...req.body, owner: user._id });
 
         await item.save();
 
@@ -147,7 +147,40 @@ const getItemById = async (req, res, next) => {
 const updateItem = async (req, res, next) => {
 
     try {
-        const item = await Item.findByIdAndUpdate(
+
+        //=========================Find User=========================
+
+        const user = await User.findOne({
+            firebaseUid: req.user.uid
+        })
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found'
+            })
+        }
+
+        //=========================Find Item=========================
+
+        const item = await Item.findById(req.params.id);
+
+        if (!item){
+            return res.status(404).json({
+                message: 'Item not found'
+            })
+        }
+
+        //=========================Check Ownership=========================
+
+        if(!item.owner.equals(user._id)) {
+            return res.status(403).json({
+                message: 'You are not allowed to update this item'
+            })
+        }
+
+        //=========================Update Item=========================
+    
+        const updateItem = await Item.findByIdAndUpdate(
             req.params.id,
             req.body,
             {
@@ -156,11 +189,6 @@ const updateItem = async (req, res, next) => {
             }
         ).populate('owner');
 
-        if (!item) {
-            return res.status(404).json({
-                message: 'User not found'
-            });
-        }
         res.json(item);
     }
     catch (error) {

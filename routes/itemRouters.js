@@ -13,7 +13,6 @@ const {
 } = require('../controllers/itemController');
 
 
-
 //=============================Router===================================
 
 const router = express.Router();
@@ -28,9 +27,9 @@ router.get('/', getItems);
 
 router.get('/:id', getItemById);
 
-router.put('/:id', updateItem);
+router.put('/:id',authMiddleware, updateItem);
 
-router.delete('/:id', deleteItem);
+router.delete('/:id',authMiddleware, deleteItem);
 
 //=============================Export Router============================
 

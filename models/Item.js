@@ -30,8 +30,21 @@ const itemSchema = new mongoose.Schema({
 
     category: {
         type: String,
+        enum: [
+            'Electronics',
+            'Clothing & Apparel',
+            'Home & Furniture',
+            'Health & Beauty',
+            'Tools & Hardware',
+            'Groceries & Food',
+            'Office & Stationery',
+            'Automotive',
+            'Toys & Sports',
+            'Books & Media',
+            'Other'
+        ],
+        default: 'Other',
         required: true,
-        trim: true
     },
 
 
@@ -53,12 +66,11 @@ const itemSchema = new mongoose.Schema({
     },
 
 
-    //=============================Estimated Value=======================
+    //=============================Location=======================
 
-    estimatedValue: {
-        type: Number,
+    location: {
+        type: String,
         required: true,
-        min: 0
     },
 
 
