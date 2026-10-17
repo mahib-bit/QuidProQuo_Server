@@ -1,32 +1,68 @@
 const Agreement = require('../models/Agreement');
 const Item = require('../models/Item');
 
-//=========================Get Agreements (with filters)=========================
+const User = require('../models/Users')
 
-const getAgreements = async (req, res, next) => {
+// //=========================Get Agreements (with filters)=========================
 
+// const getAgreements = async (req, res, next) => {
+
+//     try {
+
+//         const filter = {};
+
+//         if (req.query.status) filter.status = req.query.status;
+//         if (req.query.borrower) filter.borrower = req.query.borrower;
+//         if (req.query.owner) filter.owner = req.query.owner;
+
+//         const agreements = await Agreement.find(filter)
+//             .populate('item', 'name')
+//             .populate('owner', 'name email')
+//             .populate('borrower', 'name email');
+
+//         res.json(agreements);
+
+//     } catch (error) {
+
+//         next(error);
+
+//     }
+
+// };
+
+
+// ========================= Get My Agreements =========================
+const getMyAgreements = async (req, res, next) => {
     try {
+        // Find the logged-in user's MongoDB record
+        const user = await User.findOne({
+            firebaseUid: req.user.uid
+        });
 
-        const filter = {};
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found'
+            });
+        }
 
-        if (req.query.status) filter.status = req.query.status;
-        if (req.query.borrower) filter.borrower = req.query.borrower;
-        if (req.query.owner) filter.owner = req.query.owner;
-
-        const agreements = await Agreement.find(filter)
-            .populate('item', 'name')
+        // Find agreements where the user is the owner or borrower
+        const agreements = await Agreement.find({
+            $or: [
+                { owner: user._id },
+                { borrower: user._id }
+            ]
+        })
+            .populate('item')
             .populate('owner', 'name email')
-            .populate('borrower', 'name email');
+            .populate('borrower', 'name email')
+            .sort({ createdAt: -1 });
 
-        res.json(agreements);
-
+        res.status(200).json(agreements);
     } catch (error) {
-
         next(error);
-
     }
-
 };
+
 
 //=========================Get Single Agreement=========================
 const getAgreementById = async (req, res, next) => {
@@ -98,7 +134,8 @@ const returnItem = async (req, res, next) => {
 };
 
 module.exports = {
-    getAgreements,
+    
+    getMyAgreements,
     getAgreementById,
     returnItem,
 };

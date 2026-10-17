@@ -1,14 +1,21 @@
 const express = require('express');
+
 const router = express.Router();
 
 const {
-    getAgreements,
+    
+    getMyAgreements,
     getAgreementById,
     returnItem
 } = require('../controllers/agreementControllers');
 
-router.get('/', getAgreements);
+
+const authMiddleware = require('../middleware/authMiddleware');
+
+router.get('/my', authMiddleware, getMyAgreements);
+
 router.get('/:id', getAgreementById);
+
 router.patch('/:id/return', returnItem);
 
 module.exports = router;

@@ -2,13 +2,16 @@
 
 const express = require('express');
 
+const authMiddleware = require('../middleware/authMiddleware');
+
 const {
     createRequest,
     getRequests,
-    getRequestsById,
+    getIncomingRequests,
     deleteRequest,
     acceptRequest,
-    rejectRequest
+    rejectRequest,
+    getMyRequests
 } = require('../controllers/requestController');
 
 
@@ -21,11 +24,13 @@ const router = express.Router();
 
 //=============================Request Routes===========================
 
-router.post('/', createRequest);
+router.post('/', authMiddleware, createRequest);
 
-router.get('/', getRequests);
+router.get('/',authMiddleware, getRequests);
 
-router.get('/:id', getRequestsById);
+router.get('/my', authMiddleware, getMyRequests);
+
+router.get('/incoming', authMiddleware, getIncomingRequests);
 
 router.delete('/:id', deleteRequest);
 
