@@ -3,184 +3,117 @@
 const Item = require('../models/Item');
 const User = require('../models/Users');
 
+//=============================Create Item===============================
+
 const createItem = async (req, res, next) => {
-
     try {
-
         //=========================Find MongoDB User=========================
-
         const user = await User.findOne({
             firebaseUid: req.user.uid
-        })
+        });
+
         if (!user) {
             return res.status(404).json({
                 message: 'User not found'
-            })
+            });
         }
 
-        //=============================Create Item===============================
-
         const item = new Item({ ...req.body, owner: user._id });
-
         await item.save();
 
         res.status(201).json(item);
-
     } catch (error) {
-
         next(error);
-
     }
-
 };
 
 //=========================Get Items (with filters)=========================
 
 const getItems = async (req, res, next) => {
-
     try {
         const filter = {};
 
         //=============================Filters=============================
-
-        if (req.query.category) {
-
-            filter.category = req.query.category;
-
-        }
-
-        if (req.query.status) {
-
-            filter.status = req.query.status;
-
-        }
-
-        if (req.query.owner) {
-
-            filter.owner = req.query.owner;
-
-        }
+        if (req.query.category) filter.category = req.query.category;
+        if (req.query.status) filter.status = req.query.status;
+        if (req.query.owner) filter.owner = req.query.owner;
 
         if (req.query.search) {
-
             filter.name = {
                 $regex: req.query.search,
                 $options: 'i'
             };
-
         }
 
         //=============================Query===============================
-
-        let query = Item.find(filter)
-            .populate('owner');
-
+        let query = Item.find(filter).populate('owner');
 
         //=============================Sorting=============================
-
-        if (req.query.sort === 'latest') {
-
-            query = query.sort({ createdAt: -1 });
-
-        }
-
-        if (req.query.sort === 'oldest') {
-
-            query = query.sort({ createdAt: 1 });
-
-        }
-
+        if (req.query.sort === 'latest') query = query.sort({ createdAt: -1 });
+        if (req.query.sort === 'oldest') query = query.sort({ createdAt: 1 });
 
         //=============================Limit===============================
-
-        if (req.query.limit) {
-
-            query = query.limit(parseInt(req.query.limit));
-
-        }
-
+        if (req.query.limit) query = query.limit(parseInt(req.query.limit));
 
         //=============================Execute Query=======================
-
         const items = await query;
-
         res.json(items);
-
     } catch (error) {
-
         next(error);
-
     }
-
 };
 
 //=============================Get Item By ID===========================
 
 const getItemById = async (req, res, next) => {
-
     try {
-
-        const item = await Item.findById(req.params.id)
-            .populate('owner');
+        const item = await Item.findById(req.params.id).populate('owner');
 
         if (!item) {
-
             return res.status(404).json({
                 message: 'Item not found'
             });
-
         }
 
         res.json(item);
-
     } catch (error) {
-
         next(error);
-
     }
-
 };
 
 //=============================Update Item==============================
 
-
 const updateItem = async (req, res, next) => {
-
     try {
-
         //=========================Find User=========================
-
         const user = await User.findOne({
             firebaseUid: req.user.uid
-        })
+        });
 
         if (!user) {
             return res.status(404).json({
                 message: 'User not found'
-            })
+            });
         }
 
         //=========================Find Item=========================
-
         const item = await Item.findById(req.params.id);
 
-        if (!item){
+        if (!item) {
             return res.status(404).json({
                 message: 'Item not found'
-            })
+            });
         }
 
         //=========================Check Ownership=========================
-
-        if(!item.owner.equals(user._id)) {
+        if (!item.owner.equals(user._id)) {
             return res.status(403).json({
                 message: 'You are not allowed to update this item'
-            })
+            });
         }
 
         //=========================Update Item=========================
-    
-        const updateItem = await Item.findByIdAndUpdate(
+        const updatedItem = await Item.findByIdAndUpdate(
             req.params.id,
             req.body,
             {
@@ -189,19 +122,29 @@ const updateItem = async (req, res, next) => {
             }
         ).populate('owner');
 
-        res.json(item);
-    }
-    catch (error) {
+        res.json(updatedItem);
+    } catch (error) {
         next(error);
     }
 };
 
 //=========================Delete Item=========================
-const deleteItem = async (req, res) => {
 
+const deleteItem = async (req, res, next) => {
     try {
+        //=========================Find User=========================
+        const user = await User.findOne({
+            firebaseUid: req.user.uid
+        });
 
-        const item = await Item.findByIdAndDelete(req.params.id);
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found'
+            });
+        }
+
+        //=========================Find Item=========================
+        const item = await Item.findById(req.params.id);
 
         if (!item) {
             return res.status(404).json({
@@ -209,19 +152,22 @@ const deleteItem = async (req, res) => {
             });
         }
 
+        //=========================Check Ownership=========================
+        if (!item.owner.equals(user._id)) {
+            return res.status(403).json({
+                message: 'You are not allowed to delete this item'
+            });
+        }
+
+        //=========================Delete Item=========================
+        await Item.findByIdAndDelete(req.params.id);
+
         res.json({
             message: 'Item deleted successfully'
         });
-
     } catch (error) {
-
-        res.status(500).json({
-            message: 'Failed to delete item',
-            error: error.message
-        });
-
+        next(error);
     }
-
 };
 
 //=============================Export===================================
