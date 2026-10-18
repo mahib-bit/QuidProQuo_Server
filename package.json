@@ -14,14 +14,15 @@
   "type": "commonjs",
   "dependencies": {
     "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
     "express": "^5.2.1",
     "firebase-admin": "^14.5.0",
     "mongoose": "^9.10.2"
   },
   "engines": {
-  "node": "22.x"
-},
-"overrides": {
+    "node": "22.x"
+  },
+  "overrides": {
     "jwks-rsa": {
       "jose": "^4.15.9"
     }

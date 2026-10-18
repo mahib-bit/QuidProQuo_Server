@@ -1,3 +1,4 @@
+require('dotenv').config();
 //===============================Imports================================
 
 const express = require('express');
